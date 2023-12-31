@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_mobile">
+
+    <fragment
+        android:id="@+id/navigation_mobile"
+        android:name="com.adil.bing_one.ui.mobile.MobileFragment"
+        android:label="@string/title_mobile"
+        tools:layout="@layout/fragment_mobile" />
+
+    <fragment
+        android:id="@+id/navigation_desktop"
+        android:name="com.adil.bing_one.ui.desktop.DesktopFragment"
+        android:label="@string/title_desktop"
+        tools:layout="@layout/fragment_desktop" />
+
+</navigation>
