@@ -6,15 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.adil.bing_one.R
-import com.adil.bing_one.app.Values
 import com.adil.bing_one.databinding.FragmentMobileBinding
 import com.adil.bing_one.methods.Methods
-import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class MobileFragment : Fragment() {
     companion object {
@@ -24,7 +20,7 @@ class MobileFragment : Fragment() {
     }
 
     private var _binding: FragmentMobileBinding? = null
-    private lateinit var mobileViewModel: MobileViewModel;
+    private lateinit var mobileViewModel: MobileViewModel
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -49,7 +45,7 @@ class MobileFragment : Fragment() {
         mobileViewModel._selectedTime.apply {
             value = mobileViewModel.sharedPref.getLong(
                 getString(R.string.selected_mobile_time),
-                3
+                5
             )
         }
         mobileViewModel._selectedCount.apply {
@@ -61,7 +57,7 @@ class MobileFragment : Fragment() {
         mobileViewModel.userAgent = mobileViewModel.sharedPref.getString(
             getString(R.string.user_agent_mobile), getString(R.string.mobileEdge)
         ) ?: ""
-        mobileViewModel._wordsList.apply { value = listOf<String>() }
+        mobileViewModel._wordsList.apply { value = listOf() }
         mobileViewModel.webView = mobileViewModel.root.findViewById(R.id.web_view)
         mobileViewModel.autoSearch = mobileViewModel.root.findViewById(R.id.state_layout)
         mobileViewModel.countLayout = mobileViewModel.root.findViewById(R.id.count_layout)
@@ -96,12 +92,14 @@ class MobileFragment : Fragment() {
         }
 
         mobileViewModel.selectedTime.observe(viewLifecycleOwner) {
+            mobileViewModel.configTimer()
             mobileViewModel.currentTimeText.text = it.toString()
             mobileViewModel.sharedEditor.putLong(getString(R.string.selected_mobile_time), it)
             mobileViewModel.sharedEditor.commit()
         }
 
         mobileViewModel.selectedCount.observe(viewLifecycleOwner) {
+            mobileViewModel.changeCount()
             mobileViewModel.sharedEditor.putInt(getString(R.string.selected_mobile_count), it)
             mobileViewModel.sharedEditor.commit()
         }
@@ -135,7 +133,7 @@ class MobileFragment : Fragment() {
         }
 
         mobileViewModel.settingsIcon.setOnClickListener {
-            showBottomSheet()
+            mobileViewModel.showBottomSheet()
         }
         // web-view
         mobileViewModel.settings = mobileViewModel.webView.settings
@@ -145,9 +143,7 @@ class MobileFragment : Fragment() {
         mobileViewModel.settings.setGeolocationEnabled(false)
         mobileViewModel.settings.javaScriptCanOpenWindowsAutomatically = true
         mobileViewModel.settings.setSupportMultipleWindows(true)
-        mobileViewModel.settings.setGeolocationEnabled(false)
         mobileViewModel.settings.loadWithOverviewMode = true
-        mobileViewModel.settings.domStorageEnabled = true
         mobileViewModel.settings.userAgentString = mobileViewModel.userAgent
 
 
@@ -159,104 +155,6 @@ class MobileFragment : Fragment() {
 
 
         return mobileViewModel.root
-    }
-
-    private fun showBottomSheet() {
-        try {
-            val bottomSheetDialog = BottomSheetDialog(requireContext())
-            bottomSheetDialog.setContentView(R.layout.bottom_sheet_layout)
-            bottomSheetDialog.behavior.isDraggable = false
-            mobileViewModel.dropDownCount = bottomSheetDialog.findViewById(R.id.dropdown_count)
-            mobileViewModel.dropDownTime = bottomSheetDialog.findViewById(R.id.dropdown_time)
-            mobileViewModel.uaEditText = bottomSheetDialog.findViewById(R.id.user_agent)
-            mobileViewModel.saveButton = bottomSheetDialog.findViewById(R.id.save_button)
-            mobileViewModel.closeButton = bottomSheetDialog.findViewById(R.id.close_button)
-
-            // drop-down-count
-            mobileViewModel.adapterCount = ArrayAdapter(
-                requireContext(), R.layout.spinner_item, Values.dropDownCountItems
-            )
-            mobileViewModel.dropDownCount?.adapter = mobileViewModel.adapterCount
-            mobileViewModel.dropDownCount?.onItemSelectedListener =
-                object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>, view: View?, position: Int, id: Long
-                    ) {
-                        mobileViewModel._selectedCount.apply {
-                            value = parent.getItemAtPosition(position).toString().toInt()
-                        }
-                        Methods.setCountValue(
-                            mobileViewModel.dropDownCount,
-                            mobileViewModel.adapterCount,
-                            parent.getItemAtPosition(position).toString(),
-                            view,
-                            name
-                        )
-                    }
-
-                    override fun onNothingSelected(parent: AdapterView<*>) {
-                        // Handle case when nothing is selected
-                        Methods.bingLogger("Nothing selected In dropDownCount Spinner $name")
-                    }
-                }
-
-            // drop-down-time
-            mobileViewModel.adapterTime = ArrayAdapter(
-                requireContext(), R.layout.spinner_item, Values.dropDownTimeItems
-            )
-
-            mobileViewModel.dropDownTime?.adapter = mobileViewModel.adapterTime
-            mobileViewModel.dropDownTime?.onItemSelectedListener =
-                object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>, view: View?, position: Int, id: Long
-                    ) {
-                        mobileViewModel._selectedTime.apply {
-                            value = parent.getItemAtPosition(position).toString().toLong()
-                        }
-                        Methods.setTimeValue(
-                            mobileViewModel.dropDownTime,
-                            mobileViewModel.adapterTime,
-                            parent.getItemAtPosition(position).toString(),
-                            view,
-                            name
-                        )
-                    }
-
-                    override fun onNothingSelected(parent: AdapterView<*>) {
-                        // Handle case when nothing is selected
-                        Methods.bingLogger("Nothing selected In dropDownTime Spinner $name")
-                    }
-                }
-            //    user-agent-edit-text
-            mobileViewModel.uaEditText?.setText(mobileViewModel.settings.userAgentString)
-            Methods.setCountValue(
-                mobileViewModel.dropDownCount,
-                mobileViewModel.adapterCount,
-                mobileViewModel.selectedCount.toString(),
-                view,
-                name
-            )
-            Methods.setTimeValue(
-                mobileViewModel.dropDownTime,
-                mobileViewModel.adapterCount,
-                mobileViewModel.selectedTime.toString(),
-                view,
-                name
-            )
-
-            mobileViewModel.saveButton?.setOnClickListener {
-                mobileViewModel.saveSettings(bottomSheetDialog)
-            }
-            mobileViewModel.closeButton?.setOnClickListener {
-                bottomSheetDialog.dismiss()
-            }
-            bottomSheetDialog.show()
-
-        } catch (e: Error) {
-            Methods.showError(view, e, "showBottomSheet", name)
-        }
-
     }
 
     override fun onDestroyView() {

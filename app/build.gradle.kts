@@ -19,7 +19,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -36,8 +36,6 @@ android {
     buildFeatures {
         viewBinding = true
     }
-    buildToolsVersion = "34.0.0"
-    ndkVersion = "26.1.10909125"
 }
 
 dependencies {
