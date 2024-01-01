@@ -3,6 +3,8 @@ package com.adil.bing_one.ui.mobile
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -12,7 +14,6 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
-
 import android.widget.SpinnerAdapter
 import android.widget.TextView
 import androidx.lifecycle.LiveData
@@ -71,7 +72,7 @@ class MobileViewModel : ViewModel() {
     val selectedTime: LiveData<Long> = _selectedTime
     val selectedCount: LiveData<Int> = _selectedCount
     var userAgent: String = ""
-    private var url: String = ""
+    private var currentWord: String = ""
 
     //    late-init
     lateinit var sharedPref: SharedPreferences
@@ -91,10 +92,7 @@ class MobileViewModel : ViewModel() {
         try {
             _wordsList.apply {
                 value = Methods.getWords(
-                    Values.wordsList,
-                    selectedCount.value!!,
-                    root,
-                    name
+                    Values.wordsList, selectedCount.value!!, root, name
                 )
             }
         } catch (e: Error) {
@@ -151,21 +149,37 @@ class MobileViewModel : ViewModel() {
         try {
             Methods.bingLogger("Api Calling in $name")
             if (wordsList.value?.count() != currentCount.value) {
-                if (url != wordsList.value?.elementAt(currentCount.value!!)) {
-                    url = wordsList.value?.elementAt(currentCount.value!!).toString()
-                    loadUrl(
-                        "${root.context.getString(R.string.bingSearchUrl)}$url"
-                    )
+                if (currentWord != wordsList.value?.elementAt(currentCount.value!!)) {
+                    currentWord = wordsList.value?.elementAt(currentCount.value!!).toString()
+                    if (webView.url!!.contains(root.context.getString(R.string.bingSearchUrl))) {
+                        webView.evaluateJavascript(
+                            "document.getElementById('sb_form_q').click()"
+                        ) { r -> Methods.bingLogger(r) }
+                        val timer = Handler(Looper.getMainLooper())
+                        timer.postDelayed({
+                            webView.evaluateJavascript(
+                                "document.getElementById('sb_form_q').value='$currentWord'"
+                            ) {}
+                        }, 1000)
+                        val handler = Handler(Looper.getMainLooper())
+                        handler.postDelayed({
+                            webView.evaluateJavascript(
+                                "document.getElementById('sb_form').submit()"
+                            ) {}
+                        }, 3000)
+                    } else {
+                        loadUrl(
+                            "${root.context.getString(R.string.bingSearchUrl)}$currentWord"
+                        )
+                        Methods.bingLogger("$name Not in Bing Search")
+                    }
                     _currentCount.apply { value = value!! + 1 }
-
                 } else {
                     Methods.bingLogger("Returned in $name")
                 }
             }
         } catch (e: Error) {
             Methods.showError(root, e, "api", name)
-
-
         }
     }
 
@@ -183,7 +197,7 @@ class MobileViewModel : ViewModel() {
     fun goToHome() {
         try {
             changeApiState(false)
-            loadUrl(R.string.bingRewardsHome.toString())
+            loadUrl(root.context.getString(R.string.bingRewardsHome))
         } catch (e: Error) {
             Methods.showError(root, e, "goToHome", name)
         }
@@ -266,28 +280,27 @@ class MobileViewModel : ViewModel() {
                 root.context, R.layout.spinner_item, Values.dropDownCountItems
             )
             dropDownCount?.adapter = adapterCount
-            dropDownCount?.onItemSelectedListener =
-                object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>, view: View?, position: Int, id: Long
-                    ) {
-                        _selectedCount.apply {
-                            value = parent.getItemAtPosition(position).toString().toInt()
-                        }
-                        Methods.setCountValue(
-                            dropDownCount,
-                            adapterCount,
-                            parent.getItemAtPosition(position).toString(),
-                            view,
-                            name
-                        )
+            dropDownCount?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>, view: View?, position: Int, id: Long
+                ) {
+                    _selectedCount.apply {
+                        value = parent.getItemAtPosition(position).toString().toInt()
                     }
-
-                    override fun onNothingSelected(parent: AdapterView<*>) {
-                        // Handle case when nothing is selected
-                        Methods.bingLogger("Nothing selected In dropDownCount Spinner $name")
-                    }
+                    Methods.setCountValue(
+                        dropDownCount,
+                        adapterCount,
+                        parent.getItemAtPosition(position).toString(),
+                        view,
+                        name
+                    )
                 }
+
+                override fun onNothingSelected(parent: AdapterView<*>) {
+                    // Handle case when nothing is selected
+                    Methods.bingLogger("Nothing selected In dropDownCount Spinner $name")
+                }
+            }
 
             // drop-down-time
             adapterTime = ArrayAdapter(
@@ -295,43 +308,34 @@ class MobileViewModel : ViewModel() {
             )
 
             dropDownTime?.adapter = adapterTime
-            dropDownTime?.onItemSelectedListener =
-                object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>, view: View?, position: Int, id: Long
-                    ) {
-                        _selectedTime.apply {
-                            value = parent.getItemAtPosition(position).toString().toLong()
-                        }
-                        Methods.setTimeValue(
-                            dropDownTime,
-                            adapterTime,
-                            parent.getItemAtPosition(position).toString(),
-                            view,
-                            name
-                        )
+            dropDownTime?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>, view: View?, position: Int, id: Long
+                ) {
+                    _selectedTime.apply {
+                        value = parent.getItemAtPosition(position).toString().toLong()
                     }
-
-                    override fun onNothingSelected(parent: AdapterView<*>) {
-                        // Handle case when nothing is selected
-                        Methods.bingLogger("Nothing selected In dropDownTime Spinner $name")
-                    }
+                    Methods.setTimeValue(
+                        dropDownTime,
+                        adapterTime,
+                        parent.getItemAtPosition(position).toString(),
+                        view,
+                        name
+                    )
                 }
+
+                override fun onNothingSelected(parent: AdapterView<*>) {
+                    // Handle case when nothing is selected
+                    Methods.bingLogger("Nothing selected In dropDownTime Spinner $name")
+                }
+            }
             //    user-agent-edit-text
             uaEditText?.setText(settings.userAgentString)
             Methods.setCountValue(
-                dropDownCount,
-                adapterCount,
-                selectedCount.value.toString(),
-                root,
-                name
+                dropDownCount, adapterCount, selectedCount.value.toString(), root, name
             )
             Methods.setTimeValue(
-                dropDownTime,
-                adapterCount,
-                selectedTime.value.toString(),
-                root,
-                name
+                dropDownTime, adapterCount, selectedTime.value.toString(), root, name
             )
 
             saveButton?.setOnClickListener {

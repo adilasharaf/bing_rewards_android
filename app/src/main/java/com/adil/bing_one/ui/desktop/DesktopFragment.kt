@@ -31,11 +31,11 @@ class DesktopFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-         desktopViewModel =
+        desktopViewModel =
             ViewModelProvider(this)[DesktopViewModel::class.java]
 
         _binding = FragmentDesktopBinding.inflate(inflater, container, false)
-         desktopViewModel.root = binding.root
+        desktopViewModel.root = binding.root
         desktopViewModel.sharedPref = requireContext().getSharedPreferences(
             name, Context.MODE_PRIVATE
         )
@@ -61,7 +61,8 @@ class DesktopFragment : Fragment() {
         desktopViewModel.countLayout = desktopViewModel.root.findViewById(R.id.count_layout)
         desktopViewModel.currentStateText =
             desktopViewModel.root.findViewById(R.id.currentState_label)
-        desktopViewModel.currentStateIcon = desktopViewModel.root.findViewById(R.id.currentState_icon)
+        desktopViewModel.currentStateIcon =
+            desktopViewModel.root.findViewById(R.id.currentState_icon)
         desktopViewModel.currentCountText = desktopViewModel.root.findViewById(R.id.current_count)
         desktopViewModel.totalCountText = desktopViewModel.root.findViewById(R.id.total_count)
         desktopViewModel.homeIcon = desktopViewModel.root.findViewById(R.id.home_icon)
@@ -141,6 +142,8 @@ class DesktopFragment : Fragment() {
         desktopViewModel.settings.setGeolocationEnabled(false)
         desktopViewModel.settings.javaScriptCanOpenWindowsAutomatically = true
         desktopViewModel.settings.setSupportMultipleWindows(true)
+        desktopViewModel.settings.loadsImagesAutomatically = false
+        desktopViewModel.settings.blockNetworkImage = false
         desktopViewModel.settings.loadWithOverviewMode = true
         desktopViewModel.settings.userAgentString = desktopViewModel.userAgent
 

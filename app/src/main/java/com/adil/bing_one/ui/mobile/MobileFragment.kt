@@ -45,7 +45,7 @@ class MobileFragment : Fragment() {
         mobileViewModel._selectedTime.apply {
             value = mobileViewModel.sharedPref.getLong(
                 getString(R.string.selected_mobile_time),
-                5
+                3
             )
         }
         mobileViewModel._selectedCount.apply {

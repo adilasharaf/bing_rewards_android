@@ -3,6 +3,8 @@ package com.adil.bing_one.ui.desktop
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -70,7 +72,7 @@ class DesktopViewModel : ViewModel() {
     val selectedTime: LiveData<Long> = _selectedTime
     val selectedCount: LiveData<Int> = _selectedCount
     var userAgent: String = ""
-    private var url: String = ""
+    private var currentWord: String = ""
 
     //    late-init
     lateinit var sharedPref: SharedPreferences
@@ -153,21 +155,34 @@ class DesktopViewModel : ViewModel() {
         try {
             Methods.bingLogger("Api Calling in $name")
             if (wordsList.value?.count() != currentCount.value) {
-                if (url != wordsList.value?.elementAt(currentCount.value!!)) {
-                    url = wordsList.value?.elementAt(currentCount.value!!).toString()
-                    loadUrl(
-                        "${root.context.getString(R.string.bingSearchUrl)}$url"
-                    )
+                if (currentWord != wordsList.value?.elementAt(currentCount.value!!)) {
+                    currentWord = wordsList.value?.elementAt(currentCount.value!!).toString()
+                    if (webView.url!!.contains(root.context.getString(R.string.bingSearchUrl))) {
+                        webView.evaluateJavascript(
+                            "document.getElementById('sb_form_q').focus()'"
+                        ) {r-> Methods.bingLogger(r)}
+                        webView.evaluateJavascript(
+                            "document.getElementById('sb_form_q').value='$currentWord'"
+                        ) {}
+                        val handler = Handler(Looper.getMainLooper())
+                        handler.postDelayed({
+                            webView.evaluateJavascript(
+                                "document.getElementById('sb_form').submit()"
+                            ) {}
+                        }, 3000)
+                    } else {
+                        loadUrl(
+                            "${root.context.getString(R.string.bingSearchUrl)}$currentWord"
+                        )
+                        Methods.bingLogger("$name Not in Bing Search")
+                    }
                     _currentCount.apply { value = value!! + 1 }
-
                 } else {
                     Methods.bingLogger("Returned in $name")
                 }
             }
         } catch (e: Error) {
             Methods.showError(root, e, "api", name)
-
-
         }
     }
 
@@ -185,7 +200,7 @@ class DesktopViewModel : ViewModel() {
     fun goToHome() {
         try {
             changeApiState(false)
-            loadUrl(R.string.bingRewardsHome.toString())
+            loadUrl(root.context.getString(R.string.bingRewardsHome))
         } catch (e: Error) {
             Methods.showError(root, e, "goToHome", name)
         }
