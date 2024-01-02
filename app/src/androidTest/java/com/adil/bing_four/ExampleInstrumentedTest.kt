@@ -1,4 +1,4 @@
-package com.adil.bing_one
+package com.adil.bing_four
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

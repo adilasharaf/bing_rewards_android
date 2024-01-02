@@ -1,4 +1,4 @@
-package com.adil.bing_one.ui.desktop
+package com.adil.bing_four.ui.desktop
 
 import android.content.Context
 import android.os.Bundle
@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.adil.bing_one.R
-import com.adil.bing_one.databinding.FragmentDesktopBinding
-import com.adil.bing_one.methods.Methods
+import com.adil.bing_four.R
+import com.adil.bing_four.databinding.FragmentDesktopBinding
+import com.adil.bing_four.methods.Methods
 
 class DesktopFragment : Fragment() {
     companion object {
@@ -43,7 +43,7 @@ class DesktopFragment : Fragment() {
         desktopViewModel._selectedTime.apply {
             value = desktopViewModel.sharedPref.getLong(
                 getString(R.string.selected_desktop_time),
-                5
+                3
             )
         }
         desktopViewModel._selectedCount.apply {

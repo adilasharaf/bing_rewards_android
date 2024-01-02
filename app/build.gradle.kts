@@ -4,14 +4,14 @@ plugins {
 }
 
 android {
-    namespace = "com.adil.bing_one"
+    namespace = "com.adil.bing_four"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.adil.bing_one"
+        applicationId = "com.adil.bing_four"
         minSdk = 24
         targetSdk = 34
-        versionCode = 2
+        versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

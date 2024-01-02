@@ -1,4 +1,4 @@
-package com.adil.bing_one
+package com.adil.bing_four
 
 import org.junit.Test
 

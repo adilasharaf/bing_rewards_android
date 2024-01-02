@@ -1,4 +1,4 @@
-package com.adil.bing_one.ui.mobile
+package com.adil.bing_four.ui.mobile
 
 import android.content.Context
 import android.os.Bundle
@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.adil.bing_one.R
-import com.adil.bing_one.databinding.FragmentMobileBinding
-import com.adil.bing_one.methods.Methods
+import com.adil.bing_four.R
+import com.adil.bing_four.databinding.FragmentMobileBinding
+import com.adil.bing_four.methods.Methods
 
 class MobileFragment : Fragment() {
     companion object {
@@ -51,7 +51,7 @@ class MobileFragment : Fragment() {
         mobileViewModel._selectedCount.apply {
             value = mobileViewModel.sharedPref.getInt(
                 getString(R.string.selected_mobile_count),
-                30
+                25
             )
         }
         mobileViewModel.userAgent = mobileViewModel.sharedPref.getString(

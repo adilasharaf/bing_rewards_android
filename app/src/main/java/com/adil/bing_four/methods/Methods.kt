@@ -1,10 +1,11 @@
-package com.adil.bing_one.methods
+package com.adil.bing_four.methods
 
 import android.util.Log
 import android.view.View
 import android.widget.Spinner
 import android.widget.SpinnerAdapter
 import com.google.android.material.snackbar.Snackbar
+import kotlin.random.Random
 
 class Methods {
     companion object {
@@ -105,5 +106,38 @@ class Methods {
             }
         }
 
+        @JvmStatic
+        fun randomDelay(minDelay: Long, maxDelay: Long): Long {
+            if (minDelay > maxDelay) {
+                throw IllegalArgumentException("minDelay must be less than or equal to maxDelay")
+            }
+            val random = Random(System.currentTimeMillis()) // Seed for more randomness
+            return random.nextLong(maxDelay - minDelay + 1) + minDelay
+        }
+        @JvmStatic
+        fun getJsCode(currentWord: String): String {
+            return """
+                            const searchInput = document.getElementById('sb_form_q');
+                            const form = searchInput && searchInput.closest('form');
+                            const randomX = Math.floor(Math.random() * document.body.scrollWidth);
+                            const randomY = Math.floor(
+                            Math.random() * Math.max(document.body.scrollHeight, window.innerHeight)
+                            );
+                            window.scrollTo(randomX, randomY);
+                            searchInput.focus();
+                            searchInput.value = '';
+                            const term = '$currentWord'
+                            let i = 0;
+                            const interval = setInterval(function () {
+                            searchInput.value += term[i];
+                            i++;
+                            if (i === term.length) {
+                            clearInterval(interval);
+                            form.submit();
+                            }
+                            },
+                            Math.floor(Math.random() * (200 - 100 + 1)) + 100);
+                        """.trimIndent()
+        }
     }
 }

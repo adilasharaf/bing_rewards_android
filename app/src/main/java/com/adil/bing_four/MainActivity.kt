@@ -1,13 +1,13 @@
-package com.adil.bing_one
+package com.adil.bing_four
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.adil.bing_one.databinding.ActivityMainBinding
-import com.adil.bing_one.methods.Methods
-import com.adil.bing_one.ui.desktop.DesktopFragment
-import com.adil.bing_one.ui.mobile.MobileFragment
+import com.adil.bing_four.databinding.ActivityMainBinding
+import com.adil.bing_four.methods.Methods
+import com.adil.bing_four.ui.desktop.DesktopFragment
+import com.adil.bing_four.ui.mobile.MobileFragment
 
 
 class MainActivity : AppCompatActivity() {
