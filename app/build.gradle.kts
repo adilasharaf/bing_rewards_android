@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.adil.bing_one"
+    namespace = "com.adil.bing_four"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.adil.bing_one"
+        applicationId = "com.adil.bing_four"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -19,7 +19,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -36,8 +36,6 @@ android {
     buildFeatures {
         viewBinding = true
     }
-    buildToolsVersion = "34.0.0"
-    ndkVersion = "26.1.10909125"
 }
 
 dependencies {
