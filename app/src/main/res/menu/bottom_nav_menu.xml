@@ -4,7 +4,7 @@
     <item
         android:id="@+id/navigation_mobile"
         android:icon="@drawable/ic_mobile"
-        android:title="@string/title_desktop" />
+        android:title="@string/title_mobile" />
     <item
         android:id="@+id/navigation_desktop"
         android:icon="@drawable/ic_desktop"
