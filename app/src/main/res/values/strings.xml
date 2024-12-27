@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Bing 4</string>
+    <string name="app_name">Bing 1</string>
     <string name="title_mobile">Mobile</string>
     <string name="title_desktop">Desktop</string>
-    <string name="mobile">Mobile</string>
-    <string name="desktop">Desktop</string>
     <string name="main_activity">Main Activity</string>
     <string name="mobileEdge">Mozilla/5.0 (Linux; Android 10; HD1913) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.135 Mobile Safari/537.36 EdgA/112.0.1722.46</string>
     <string name="bingHomeUrl">https://www.bing.com/</string>
     <string name="bingRewardsHome">https://rewards.bing.com/</string>
     <string name="bingSearchUrl">https://www.bing.com/search?q=</string>
+    <string name="getWordsUrl">https://random-word-api.herokuapp.com/word?number=</string>
     <string name="desktopAgent">Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36</string>
     <string name="slash">/</string>
     <string name="zero">0</string>
@@ -19,20 +18,25 @@
     <!--    mobile-shred-pref-->
     <string name="selected_mobile_time">SelectedMobileTime</string>
     <string name="selected_mobile_count">SelectedMobileCount</string>
+    <string name="selected_mobile_image">SelectedMobileImage</string>
+    <string name="selected_mobile_windows">SelectedMobileWindows</string>
     <string name="user_agent_mobile">UserAgentMobile</string>
 
     <!--    desktop-shred-pref-->
     <string name="selected_desktop_time">SelectedDesktopTime</string>
     <string name="selected_desktop_count">SelectedDesktopCount</string>
+    <string name="selected_desktop_image">SelectedDesktopImage</string>
+    <string name="selected_desktop_windows">SelectedDesktopWindows</string>
     <string name="user_agent_desktop">UserAgentDesktop</string>
 
     <string name="count">Count :</string>
+    <string name="load_image">Show image :</string>
+    <string name="windows">Multiple windows :</string>
     <string name="time">Time :</string>
     <string name="settings">Settings</string>
-    <string name="words">Search words</string>
     <string name="user_agent">User agent</string>
-    <string name="type_words">Type words</string>
     <string name="seconds">s</string>
-    <string name="save">Save</string>
+    <string name="no_connection">No Internet Connection</string>
+    <string name="connection_retained">Internet connection Retained</string>
 
 </resources>
